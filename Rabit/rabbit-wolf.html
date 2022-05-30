@@ -19,76 +19,63 @@
       btn.onclick = table;
       function table() {
         const value = document.getElementById("select").value;
-        // const result = Create2DArray(value)
-        const result = createGameState(value);
-        let rabbitIndex = getNullRandomIndex(result);
-        console.log(rabbitIndex);
-        rabbitIndex = "img/rabbit.gif";
-        console.log(rabbitIndex);
-        result[Math.floor(Math.random() * value + 1)][
-          Math.floor(Math.random() * value + 1)
-        ] = "img/home.png";
-        result[Math.floor(Math.random() * value + 1)][
-          Math.floor(Math.random() * value + 1)
-        ] = "img/wolf.jpg";
-        result[Math.floor(Math.random() * value + 1)][
-          Math.floor(Math.random() * value + 1)
-        ] = "img/wolf.jpg";
-        result[Math.floor(Math.random() * value + 1)][
-          Math.floor(Math.random() * value + 1)
-        ] = "img/wolf.jpg";
-
-        if (value == 7) {
-          result[Math.floor(Math.random() * value + 1)][
-            Math.floor(Math.random() * value + 1)
-          ] = "img/wolf.jpg";
-          result[Math.floor(Math.random() * value + 1)][
-            Math.floor(Math.random() * value + 1)
-          ] = "img/wolf.jpg";
-          result[Math.floor(Math.random() * value + 1)][
-            Math.floor(Math.random() * value + 1)
-          ] = "img/wolf.jpg";
-        } else if (value == 10) {
-          result[Math.floor(Math.random() * value + 1)][
-            Math.floor(Math.random() * value + 1)
-          ] = "img/wolf.jpg";
-          result[Math.floor(Math.random() * value + 1)][
-            Math.floor(Math.random() * value + 1)
-          ] = "img/wolf.jpg";
-          result[Math.floor(Math.random() * value + 1)][
-            Math.floor(Math.random() * value + 1)
-          ] = "img/wolf.jpg";
-          result[Math.floor(Math.random() * value + 1)][
-            Math.floor(Math.random() * value + 1)
-          ] = "img/wolf.jpg";
-          result[Math.floor(Math.random() * value + 1)][
-            Math.floor(Math.random() * value + 1)
-          ] = "img/wolf.jpg";
-          result[Math.floor(Math.random() * value + 1)][
-            Math.floor(Math.random() * value + 1)
-          ] = "img/wolf.jpg";
-        }
-
-        console.log(result);
+        wolfCount = Math.ceil((60 * value) / 100);
+        fenceCount = Math.round((40 * value) / 100);
+        console.log(wolfCount);
+        console.log(fenceCount);
+        const array = createMatrix(value);
+        defineAtributes(array, wolfCount, fenceCount);
       }
 
-      function getNullRandomIndex(arr) {
-        let indexes = [];
-        for (let i = 0; i < arr.length; i++) {
-          for (let j = 0; j < arr.length; j++) {
-            if (arr[i][j] == null) indexes.push(0);
-          }
-        }
-
-        let result =
-          indexes[parseInt(Math.random() * (indexes.length - 1))][
-            parseInt(Math.random() * (indexes.length - 1))
-          ];
-
-        return result;
+      function defineAtributes(array, wolfCount, fenceCount) {
+        defineRabbit(array);
+        defineWolves(array, wolfCount);
+        fences(array, fenceCount);
+        defineHome(array);
+        console.log(array);
       }
 
-      function createGameState(value) {
+      function defineRabbit(arr) {
+        const result = defineRandomPosition(arr, "img/rabbit.gif");
+      }
+
+      function fences(arr, count) {
+        for (i = 1; i < count; i++) {
+          defineFence(arr);
+        }
+      }
+
+      function defineFence(arr) {
+        const result = defineRandomPosition(arr, "img/fence.png");
+      }
+
+      function defineWolves(arr, wolfCount) {
+        for (i = 0; i < wolfCount; i++) {
+          defineWolf(arr);
+        }
+        return arr;
+      }
+
+      function defineWolf(arr) {
+        const result = defineRandomPosition(arr, "img/wolf.jpg");
+      }
+
+      function defineHome(arr) {
+        const result = defineRandomPosition(arr, "img/home.png");
+      }
+
+      function defineRandomPosition(arr, img) {
+        const random1 = Math.floor(Math.random() * arr.length);
+        const random2 = Math.floor(Math.random() * arr.length);
+        if (arr[random1][random2] === null) {
+          arr[random1][random2] = img;
+        } else {
+          defineRandomPosition(arr, img);
+        }
+        return arr;
+      }
+
+      function createMatrix(value) {
         let arr = [];
         for (let i = 0; i < value; i++) {
           for (let j = 0; j < value; j++) {
@@ -102,16 +89,6 @@
         }
         return arr;
       }
-
-      function Create2DArray(value) {
-        let x = new Array(value);
-        for (let i = 0; i < value; i++) {
-          x[i] = new Array(value);
-        }
-        return x;
-      }
     </script>
-
-    <p>uyfytdtw</p>
   </body>
 </html>
