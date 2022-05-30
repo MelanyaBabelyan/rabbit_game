@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button id="btn">Start</button>
+    <select id="select">
+      <option value="5">5 X 5</option>
+      <option value="7">7 X 7</option>
+      <option value="10">10 X 10</option>
+    </select>
+    <div id="container"></div>
+    <script>
+      btn.onclick = table;
+      function table() {
+        const value = document.getElementById("select").value;
+        // const result = Create2DArray(value)
+        const result = createGameState(value);
+        let rabbitIndex = getNullRandomIndex(result);
+        console.log(rabbitIndex);
+        rabbitIndex = "img/rabbit.gif";
+        console.log(rabbitIndex);
+        result[Math.floor(Math.random() * value + 1)][
+          Math.floor(Math.random() * value + 1)
+        ] = "img/home.png";
+        result[Math.floor(Math.random() * value + 1)][
+          Math.floor(Math.random() * value + 1)
+        ] = "img/wolf.jpg";
+        result[Math.floor(Math.random() * value + 1)][
+          Math.floor(Math.random() * value + 1)
+        ] = "img/wolf.jpg";
+        result[Math.floor(Math.random() * value + 1)][
+          Math.floor(Math.random() * value + 1)
+        ] = "img/wolf.jpg";
+
+        if (value == 7) {
+          result[Math.floor(Math.random() * value + 1)][
+            Math.floor(Math.random() * value + 1)
+          ] = "img/wolf.jpg";
+          result[Math.floor(Math.random() * value + 1)][
+            Math.floor(Math.random() * value + 1)
+          ] = "img/wolf.jpg";
+          result[Math.floor(Math.random() * value + 1)][
+            Math.floor(Math.random() * value + 1)
+          ] = "img/wolf.jpg";
+        } else if (value == 10) {
+          result[Math.floor(Math.random() * value + 1)][
+            Math.floor(Math.random() * value + 1)
+          ] = "img/wolf.jpg";
+          result[Math.floor(Math.random() * value + 1)][
+            Math.floor(Math.random() * value + 1)
+          ] = "img/wolf.jpg";
+          result[Math.floor(Math.random() * value + 1)][
+            Math.floor(Math.random() * value + 1)
+          ] = "img/wolf.jpg";
+          result[Math.floor(Math.random() * value + 1)][
+            Math.floor(Math.random() * value + 1)
+          ] = "img/wolf.jpg";
+          result[Math.floor(Math.random() * value + 1)][
+            Math.floor(Math.random() * value + 1)
+          ] = "img/wolf.jpg";
+          result[Math.floor(Math.random() * value + 1)][
+            Math.floor(Math.random() * value + 1)
+          ] = "img/wolf.jpg";
+        }
+
+        console.log(result);
+      }
+
+      function getNullRandomIndex(arr) {
+        let indexes = [];
+        for (let i = 0; i < arr.length; i++) {
+          for (let j = 0; j < arr.length; j++) {
+            if (arr[i][j] == null) indexes.push(0);
+          }
+        }
+
+        let result =
+          indexes[parseInt(Math.random() * (indexes.length - 1))][
+            parseInt(Math.random() * (indexes.length - 1))
+          ];
+
+        return result;
+      }
+
+      function createGameState(value) {
+        let arr = [];
+        for (let i = 0; i < value; i++) {
+          for (let j = 0; j < value; j++) {
+            arr[i] = [];
+          }
+        }
+        for (let i = 0; i < value; i++) {
+          for (let j = 0; j < value; j++) {
+            arr[i][j] = null;
+          }
+        }
+        return arr;
+      }
+
+      function Create2DArray(value) {
+        let x = new Array(value);
+        for (let i = 0; i < value; i++) {
+          x[i] = new Array(value);
+        }
+        return x;
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,45 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+body {
+  width: 50%;
+  height: 50%;
+  margin: 50px auto;
+}
+button {
+  width: 150px;
+  padding: 10px;
+  background: teal;
+  color: white;
+  border-radius: 25px;
+  margin: 0 20px;
+  cursor: pointer;
+}
+#select {
+  background: transparent;
+  width: 150px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  height: 34px;
+  margin: 50px;
+  width: 120px;
+  height: 34px;
+  border: 1px solid #111;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.box {
+  width: 80px;
+  height: 80px;
+  background-color: cadetblue;
+  margin: 1px;
+  float: left;
+}
+div {
+  display: block;
+}
+#container{
+  width: 490px;
+  height: 340px;
+}
