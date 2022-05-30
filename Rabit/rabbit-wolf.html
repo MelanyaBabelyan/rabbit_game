@@ -10,33 +10,46 @@
   <body>
     <button id="btn">Start</button>
     <select id="select">
-      <option value="5">5 X 5</option>
-      <option value="7">7 X 7</option>
-      <option value="10">10 X 10</option>
+      <option value="5" data-width="100">5 X 5</option>
+      <option value="7" data-width="250">7 X 7</option>
+      <option value="10" data-width="500">10 X 10</option>
     </select>
     <div id="container"></div>
     <script>
-      btn.onclick = table;
-      function table() {
+      const FREE_CELL = 0;
+      const RABBIT = 1;
+      const WOLF = 2;
+      const FENCE = 3;
+      const HOME = 4;
+
+      btn.onclick = start;
+      function start() {
         const value = document.getElementById("select").value;
-        wolfCount = Math.ceil((60 * value) / 100);
-        fenceCount = Math.round((40 * value) / 100);
+        const wolfCount = Math.ceil((60 * value) / 100);
+        const fenceCount = Math.round((40 * value) / 100);
         console.log(wolfCount);
         console.log(fenceCount);
-        const array = createMatrix(value);
+        const array = createMatrice(value);
         defineAtributes(array, wolfCount, fenceCount);
+      }
+
+      function defineRandomPosition(arr, img) {
+        const x = Math.floor(Math.random() * arr.length);
+        const y = Math.floor(Math.random() * arr.length);
+        if (arr[x][y] === FREE_CELL) {
+          arr[x][y] = img;
+        } else {
+          defineRandomPosition(arr, img);
+        }
+        return arr;
       }
 
       function defineAtributes(array, wolfCount, fenceCount) {
         defineRabbit(array);
-        defineWolves(array, wolfCount);
+        wolves(array, wolfCount);
         fences(array, fenceCount);
         defineHome(array);
         console.log(array);
-      }
-
-      function defineRabbit(arr) {
-        const result = defineRandomPosition(arr, "img/rabbit.gif");
       }
 
       function fences(arr, count) {
@@ -45,46 +58,23 @@
         }
       }
 
-      function defineFence(arr) {
-        const result = defineRandomPosition(arr, "img/fence.png");
-      }
-
-      function defineWolves(arr, wolfCount) {
+      function wolves(arr, wolfCount) {
         for (i = 0; i < wolfCount; i++) {
           defineWolf(arr);
         }
-        return arr;
       }
 
-      function defineWolf(arr) {
-        const result = defineRandomPosition(arr, "img/wolf.jpg");
-      }
+      const defineRabbit = (arr) => defineRandomPosition(arr, RABBIT);
+      const defineFence = (arr) => defineRandomPosition(arr, FENCE);
+      const defineWolf = (arr) => defineRandomPosition(arr, WOLF);
+      const defineHome = (arr) => defineRandomPosition(arr, HOME);
 
-      function defineHome(arr) {
-        const result = defineRandomPosition(arr, "img/home.png");
-      }
-
-      function defineRandomPosition(arr, img) {
-        const random1 = Math.floor(Math.random() * arr.length);
-        const random2 = Math.floor(Math.random() * arr.length);
-        if (arr[random1][random2] === null) {
-          arr[random1][random2] = img;
-        } else {
-          defineRandomPosition(arr, img);
-        }
-        return arr;
-      }
-
-      function createMatrix(value) {
+      function createMatrice(value) {
         let arr = [];
         for (let i = 0; i < value; i++) {
+          arr[i] = [];
           for (let j = 0; j < value; j++) {
-            arr[i] = [];
-          }
-        }
-        for (let i = 0; i < value; i++) {
-          for (let j = 0; j < value; j++) {
-            arr[i][j] = null;
+            arr[i][j] = FREE_CELL;
           }
         }
         return arr;
