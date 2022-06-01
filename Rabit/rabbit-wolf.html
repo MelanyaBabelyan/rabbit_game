@@ -21,16 +21,16 @@
       const WOLF = 2;
       const FENCE = 3;
       const HOME = 4;
-const btn = document.getElementById("btn");
+      const btn = document.getElementById("btn");
       btn.onclick = start;
-      function start() {
+      function start(moveRabbit) {
         const value = document.getElementById("select").value;
         const wolfCount = Math.ceil((60 * value) / 100);
         const fenceCount = Math.round((40 * value) / 100);
-        console.log(wolfCount);
-        console.log(fenceCount);
         const array = createMatrice(value);
         defineAtributes(array, wolfCount, fenceCount);
+        const moveRab = moveRabbit;
+        moveCharacter(array);
       }
 
       function defineRandomPosition(arr, img) {
@@ -78,6 +78,49 @@ const btn = document.getElementById("btn");
           }
         }
         return arr;
+      }
+
+      function findCorinateCharacter(array, character) {
+        const findeMtrix = function (accumulator, row, x) {
+          row.forEach((cell, y) => {
+            if (cell === character) {
+              console.log(cell);
+              accumulator.push([x, y]);
+            }
+          });
+          return accumulator;
+        };
+        return array.reduce(findeMtrix, []);
+      }
+
+      function Rabbitindex(array) {
+        let rabbitIndex = findCorinateCharacter(array, RABBIT);
+        i = rabbitIndex[0][0];
+        j = rabbitIndex[0][1];
+        array[i][j] = array[i][j + 1];
+        if (array[i][j] === FREE_CELL) {
+          array[i][j + 1] = RABBIT;
+        } else if (array[i][j + 1] !== FREE_CELL) {
+          array[i][j] = RABBIT;
+        } else if (array[j] === 4) {
+          array[j] = 0;
+          array[i][j] = RABBIT;
+        }
+      }
+
+      function moveCharacter(array) {
+        window.addEventListener("keyup", function (event) {
+          console.log(event.key);
+          if (event.key === "ArrowRight") {
+            Rabbitindex(array);
+            console.log(array);
+          } else if (event.key === "ArrowLeft") {
+          } else if (event.key === "ArrowUp") {
+          } else if (event.key === "ArrowDown") {
+          } else if (event.key === "Enter") {
+            start();
+          }
+        });
       }
     </script>
   </body>
