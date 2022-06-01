@@ -123,37 +123,45 @@
         if (y === 0) {
           console.log(array.length);
           let newY = array.length - 1;
-          [x][y] = array[x][newY];
-          // array[x][y] = [x, newY];
-        }
-        let newY = y - 1;
-        array[x][y] = array[x][newY];
-        if (array[x][newY] === FREE_CELL) {
           array[x][newY] = RABBIT;
           array[x][y] = FREE_CELL;
-        } else if (array[x][newY] === HOME) {
-          alert("Congratulations! You Won!");
-        } else if (array[x][newY] === WOLF) {
-          alert("Game Over!");
-        } else if (array[x][newY] === FENCE) {
-          array[x][y] = RABBIT;
+          // array[x][y] = [x, newY];
+        } else {
+          let newY = y - 1;
+          array[x][y] = array[x][newY];
+          if (array[x][newY] === FREE_CELL) {
+            array[x][newY] = RABBIT;
+            array[x][y] = FREE_CELL;
+          } else if (array[x][newY] === HOME) {
+            alert("Congratulations! You Won!");
+          } else if (array[x][newY] === WOLF) {
+            alert("Game Over!");
+          } else if (array[x][newY] === FENCE) {
+            array[x][y] = RABBIT;
+          }
         }
         console.log(array);
       }
 
       function RabbitGoToUp(array, rabbitIndex) {
         const [x, y] = rabbitIndex;
-        const newX = (x - 1) % array.length;
-        array[x][y] = array[newX][y];
-        if (array[newX][y] === FREE_CELL) {
+        if (x === 0) {
+          let newX = array.length - 1;
           array[newX][y] = RABBIT;
           array[x][y] = FREE_CELL;
-        } else if (array[newX][y] === HOME) {
-          alert("Congratulations! You Won!");
-        } else if (array[newX][y] === WOLF) {
-          alert("Game Over!");
-        } else if (array[newX][y] === FENCE) {
-          array[x][y] = RABBIT;
+        } else {
+          let newX = (x - 1) % array.length;
+          array[x][y] = array[newX][y];
+          if (array[newX][y] === FREE_CELL) {
+            array[newX][y] = RABBIT;
+            array[x][y] = FREE_CELL;
+          } else if (array[newX][y] === HOME) {
+            alert("Congratulations! You Won!");
+          } else if (array[newX][y] === WOLF) {
+            alert("Game Over!");
+          } else if (array[newX][y] === FENCE) {
+            array[x][y] = RABBIT;
+          }
         }
         console.log(array);
       }
@@ -187,36 +195,6 @@
           start();
         }
       }
-
-      // function RabbitGoToLeft(array) {
-      //   x = rabbitIndex[0][0];
-      //   y = rabbitIndex[0][1];
-      //   console.log(value - 1);
-      //   array[x][y] = array[x][y - 1];
-      //   if (array[x][y] === FREE_CELL) {
-      //     array[x][y - 1] = RABBIT;
-      //   } else if (array[x][y - 1] !== FREE_CELL) {
-      //     array[x][y] = RABBIT;
-      //   } else if (y === 0) {
-      //     console.log(y);
-      //     array[x][value - 1] = RABBIT;
-      //   }
-      //   console.log(array);
-      // }
-
-      // if (newY === array.length - 1) {
-      //   console.log(array[y]);
-      //   if (array[x][0] === FREE_CELL) {
-      //     array[x][0] = RABBIT;
-      //     array[x][array.length - 1] = FREE_CELL;
-      //   }
-      // }
-      // array[x][y] = array[x][y + 1];
-      // if (array[x][y] === FREE_CELL) {
-      //   array[x][y + 1] = RABBIT;
-      // } else {
-      //   array[x][y] = RABBIT;
-      // }
     </script>
   </body>
 </html>
