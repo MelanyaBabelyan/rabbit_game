@@ -22,9 +22,9 @@
       const FENCE = 3;
       const HOME = 4;
       const btn = document.getElementById("btn");
+      const value = document.getElementById("select").value;
       btn.onclick = start;
       function start(moveRabbit) {
-        const value = document.getElementById("select").value;
         const wolfCount = Math.ceil((60 * value) / 100);
         const fenceCount = Math.round((40 * value) / 100);
         const array = createMatrice(value);
@@ -92,28 +92,50 @@
         return array.reduce(findeMtrix, []);
       }
 
-      function Rabbitindex(array) {
+      function RabbitGoToRight(array) {
         let rabbitIndex = findCorinateCharacter(array, RABBIT);
-        i = rabbitIndex[0][0];
-        j = rabbitIndex[0][1];
-        array[i][j] = array[i][j + 1];
-        if (array[i][j] === FREE_CELL) {
-          array[i][j + 1] = RABBIT;
-        } else if (array[i][j + 1] !== FREE_CELL) {
-          array[i][j] = RABBIT;
-        } else if (array[j] === 4) {
-          array[j] = 0;
-          array[i][j] = RABBIT;
+        x = rabbitIndex[0][0];
+        y = rabbitIndex[0][1];
+        array[x][y] = array[x][y + 1];
+        if (y === value - 1) {
+          console.log(array[y]);
+          if (array[x][0] === FREE_CELL) {
+            array[x][0] = RABBIT;
+            array[x][y] = array[x][y];
+          }
         }
+
+        if (array[x][y] === FREE_CELL) {
+          array[x][y + 1] = RABBIT;
+        } else if (array[x][y + 1] !== FREE_CELL) {
+          array[x][y] = RABBIT;
+        }
+        console.log(array);
       }
 
+      function RabbitGoToLeft(array) {
+        let rabbitIndex = findCorinateCharacter(array, RABBIT);
+        x = rabbitIndex[0][0];
+        y = rabbitIndex[0][1];
+        console.log(value - 1);
+        array[x][y] = array[x][y - 1];
+        if (array[x][y] === FREE_CELL) {
+          array[x][y - 1] = RABBIT;
+        } else if (array[x][y - 1] !== FREE_CELL) {
+          array[x][y] = RABBIT;
+        } else if (y === 0) {
+          console.log(y);
+          array[x][value - 1] = RABBIT;
+        }
+        console.log(array);
+      }
       function moveCharacter(array) {
         window.addEventListener("keyup", function (event) {
           console.log(event.key);
           if (event.key === "ArrowRight") {
-            Rabbitindex(array);
-            console.log(array);
+            RabbitGoToRight(array);
           } else if (event.key === "ArrowLeft") {
+            RabbitGoToLeft(array);
           } else if (event.key === "ArrowUp") {
           } else if (event.key === "ArrowDown") {
           } else if (event.key === "Enter") {
