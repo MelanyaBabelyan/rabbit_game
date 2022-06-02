@@ -41,8 +41,6 @@
           // IndexWolfes(wolfIndex);
           console.log(wolfIndex);
           wolfIndex.forEach((element) => findTheEmptyBoxes(array, element));
-          const a = pythagorean(rabbitIndex, wolfIndex);
-          console.log(a);
         });
       }
 
@@ -202,14 +200,6 @@
         } else if (eventKey === "Enter") {
           start();
         }
-      }
-
-      function pythagorean(rabbitIndex, wolfIndex) {
-        const [x, y] = rabbitIndex;
-        const [x2, y2] = wolfIndex;
-        return Math.sqrt(
-          Math.pow(x, 2) + Math.pow(x2, 2) + Math.pow(y, 2) + Math.pow(y2, 2)
-        );
       }
 
       function findTheEmptyBoxes(array, element) {
