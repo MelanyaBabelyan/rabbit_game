@@ -126,7 +126,6 @@
 
       function RabbitGoToLeft(array, rabbitIndex) {
         const [x, y] = rabbitIndex;
-        console.log(y);
         if (y === 0) {
           console.log(array.length);
           let newY = array.length - 1;
@@ -205,11 +204,9 @@
       function findTheEmptyBoxes(array, element) {
         newArray = [];
         const [x, y] = element;
-
         if (array[x + 1][y] === FREE_CELL) {
           array[x + 1][y] = WOLF;
           array[x][y] = FREE_CELL;
-          console.log(array);
           newArray.push([x + 1][y]);
         } else if (array[x - 1][y] === FREE_CELL) {
           array[x - 1][y] = WOLF;
@@ -225,7 +222,8 @@
           array[x][y] = FREE_CELL;
           newArray.push([x][y - 1]);
         }
-        console.log(array);
+
+        return newArray;
       }
     </script>
   </body>
