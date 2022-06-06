@@ -10,9 +10,9 @@
   <body>
     <button id="btn">Start</button>
     <select id="select">
-      <option value="5" data-width="100">5 X 5</option>
-      <option value="7" data-width="250">7 X 7</option>
-      <option value="10" data-width="500">10 X 10</option>
+      <option value="5">5 X 5</option>
+      <option value="7">7 X 7</option>
+      <option value="10">10 X 10</option>
     </select>
     <div id="container"></div>
     <script>
@@ -21,29 +21,40 @@
       const WOLF = "wOLF";
       const FENCE = 3;
       const HOME = "Home";
-      const btn = document.getElementById("btn");
+      const X = 0;
+      const Y = 1;
 
+      const IMAGES = {
+        [RABBIT]: "img/rabbit.gif",
+        [WOLF]: "img/gamewolf.png",
+        [FENCE]: "img/ban.png",
+        [HOME]: "img/home.png",
+      };
+
+      const btn = document.getElementById("btn");
       btn.onclick = start;
       function start(moveRabbit) {
+        deleteThePlayingField();
         const value = document.getElementById("select").value;
+        const array = createMatrice(value);
+
         const wolfCount = Math.ceil((60 * value) / 100);
         const fenceCount = Math.round((40 * value) / 100);
-        const array = createMatrice(value);
 
         defineAtributes(array, wolfCount, fenceCount);
         const moveRab = moveRabbit;
+        eventLisener(array);
 
+        createAGameTable(array);
+      }
+
+      function eventLisener(array) {
         window.addEventListener("keyup", function (event) {
           const rabbitIndex = findCordinateCharacter(array, RABBIT)[0];
           const [x, y] = rabbitIndex;
-          moveCharacter(array, rabbitIndex, event.key);
-          const wolfIndex = findCordinateCharacter(array, WOLF);
-          // IndexWolfes(wolfIndex);
-          console.log(wolfIndex);
-          wolfIndex.forEach((element) => findTheEmptyBoxes(array, element));
+          moveRabit(array, rabbitIndex, event.key);
         });
       }
-
       function defineRandomPosition(arr, character) {
         const x = Math.floor(Math.random() * arr.length);
         const y = Math.floor(Math.random() * arr.length);
@@ -52,10 +63,10 @@
         } else {
           defineRandomPosition(arr, character);
         }
-        return arr;
       }
 
       function defineAtributes(array, wolfCount, fenceCount) {
+        drawATable(array);
         defineRabbit(array);
         wolves(array, wolfCount);
         fences(array, fenceCount);
@@ -116,8 +127,12 @@
           array[x][y] = FREE_CELL;
         } else if (array[x][newY] === HOME) {
           alert("Congratulations! You Won!");
+          deleteThePlayingField();
+          window.removeEventListener("keyup");
         } else if (array[x][newY] === WOLF) {
           alert("Game Over!");
+          deleteThePlayingField();
+          window.removeEventListener("keyup");
         } else if (array[x][newY] === FENCE) {
           array[x][y] = RABBIT;
         }
@@ -139,8 +154,12 @@
             array[x][y] = FREE_CELL;
           } else if (array[x][newY] === HOME) {
             alert("Congratulations! You Won!");
+            deleteThePlayingField();
+            window.removeEventListener("keyup");
           } else if (array[x][newY] === WOLF) {
             alert("Game Over!");
+            deleteThePlayingField();
+            window.removeEventListener("keyup");
           } else if (array[x][newY] === FENCE) {
             array[x][y] = RABBIT;
           }
@@ -162,8 +181,13 @@
             array[x][y] = FREE_CELL;
           } else if (array[newX][y] === HOME) {
             alert("Congratulations! You Won!");
+            deleteThePlayingField();
+            window.removeEventListener("keyup");
           } else if (array[newX][y] === WOLF) {
             alert("Game Over!");
+
+            deleteThePlayingField();
+            window.removeEventListener("keyup");
           } else if (array[newX][y] === FENCE) {
             array[x][y] = RABBIT;
           }
@@ -178,52 +202,148 @@
         if (array[newX][y] === FREE_CELL) {
           array[newX][y] = RABBIT;
           array[x][y] = FREE_CELL;
-        } else if (array[newX][y] === HOME) {
+        }
+        if (array[newX][y] === HOME) {
           alert("Congratulations! You Won!");
+          deleteThePlayingField();
+          window.removeEventListener("keyup");
         } else if (array[newX][y] === WOLF) {
           alert("Game Over!");
+          deleteThePlayingField();
+          window.removeEventListener("keyup");
         } else if (array[newX][y] === FENCE) {
           array[x][y] = RABBIT;
         }
         console.log(array);
       }
-      function moveCharacter(array, rabbitIndex, eventKey) {
+      function moveRabit(array, rabbitIndex, eventKey) {
         if (eventKey === "ArrowRight") {
           RabbitGoToRight(array, rabbitIndex);
+          deleteThePlayingField();
         } else if (eventKey === "ArrowLeft") {
           RabbitGoToLeft(array, rabbitIndex);
+          deleteThePlayingField();
         } else if (eventKey === "ArrowUp") {
           RabbitGoToUp(array, rabbitIndex);
+          deleteThePlayingField();
         } else if (eventKey === "ArrowDown") {
           RabbitGoToDown(array, rabbitIndex);
-        } else if (eventKey === "Enter") {
-          start();
+          deleteThePlayingField();
+        }
+        moveWolf(array, rabbitIndex);
+        deleteThePlayingField();
+        createAGameTable(array);
+      }
+
+      function findTheEmptyBoxes(array, index) {
+        const [x, y] = index;
+        const up = [x - 1, y];
+        const down = [x + 1, y];
+        const right = [x, y + 1];
+        const left = [x, y - 1];
+        let steps = [up, down, right, left];
+
+        steps = steps.filter(
+          (item) =>
+            item[X] >= 0 &&
+            item[X] < array.length &&
+            item[Y] >= 0 &&
+            item[Y] < array.length
+        );
+        let findRebbitNearWolf = steps.filter(
+          (step) => array[step[X]][step[Y]] === RABBIT
+        );
+
+        if (findRebbitNearWolf.length !== 0) {
+          alert("You Lost");
+          deleteThePlayingField();
+          window.removeEventListener("keyup");
+        } else {
+          return steps.filter((step) => array[step[X]][step[Y]] === FREE_CELL);
         }
       }
 
-      function findTheEmptyBoxes(array, element) {
-        newArray = [];
-        const [x, y] = element;
-        if (array[x + 1][y] === FREE_CELL) {
-          array[x + 1][y] = WOLF;
-          array[x][y] = FREE_CELL;
-          newArray.push([x + 1][y]);
-        } else if (array[x - 1][y] === FREE_CELL) {
-          array[x - 1][y] = WOLF;
-          array[x][y] = FREE_CELL;
-          newArray.push([x - 1][y]);
-          // array.push([x + 1][y]);
-        } else if ([x][y + 1] === FREE_CELL) {
-          array[x][y + 1] = WOLF;
-          array[x][y] = FREE_CELL;
-          newArray.push([x][y + 1]);
-        } else if ([x][y - 1] === FREE_CELL) {
-          array[x][y - 1] = WOLF;
-          array[x][y] = FREE_CELL;
-          newArray.push([x][y - 1]);
-        }
+      function pythagorean(rabbitIndex, wolfIndex) {
+        const [x1, y1] = rabbitIndex;
+        const [x2, y2] = wolfIndex;
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+      }
 
-        return newArray;
+      function moveWolf(array, rabbitIndex) {
+        const wolfsIndex = findCordinateCharacter(array, WOLF);
+
+        const moveWolf = (wolf) => {
+          const steps = findTheEmptyBoxes(array, wolf);
+          if (steps !== undefined) {
+            const distances = steps.map((step) =>
+              pythagorean(rabbitIndex, step)
+            );
+            const index = distances.indexOf(Math.min(...distances));
+            const nearPoint = steps[index];
+            array[nearPoint[X]][nearPoint[Y]] = WOLF;
+            array[wolf[X]][wolf[Y]] = FREE_CELL;
+          }
+        };
+        wolfsIndex.forEach(moveWolf);
+        return array;
+      }
+
+      function drawATable(array) {
+        sizeThePlayingField(array);
+      }
+
+      function sizeThePlayingField(array) {
+        const width = array.length * 80 + 100 + "px";
+        const gameAreaDiv = document.getElementById("container");
+        gameAreaDiv.style.width = width;
+      }
+
+      function appendInnerDivsElement(index) {
+        const container = document.getElementById("container");
+        const div = document.createElement("div");
+        div.className.box;
+        div.setAttribute("id", index);
+        div.setAttribute("class", "box");
+        container.append(div);
+      }
+
+      function addPicturesOnThePlayingField(character, index) {
+        const div = document.getElementById(index);
+        const img = document.createElement("img");
+        img.src = IMAGES[character];
+        div.append(img);
+      }
+
+      function createAGameTable(array) {
+        array.forEach((row, i) => {
+          row.forEach((col, j) => {
+            const index = i.toString() + j.toString();
+            if (col === FREE_CELL) {
+              appendInnerDivsElement(index);
+            }
+            if (col === RABBIT) {
+              appendInnerDivsElement(index);
+              addPicturesOnThePlayingField(RABBIT, index);
+            }
+            if (col === WOLF) {
+              appendInnerDivsElement(index);
+              addPicturesOnThePlayingField(WOLF, index);
+            }
+            if (col === FENCE) {
+              appendInnerDivsElement(index);
+              addPicturesOnThePlayingField(FENCE, index);
+            }
+            if (col === HOME) {
+              appendInnerDivsElement(index);
+              addPicturesOnThePlayingField(HOME, index);
+            }
+          });
+        });
+      }
+
+      function deleteThePlayingField() {
+        const container = document.getElementById("container");
+        container.innerHTML = "";
       }
     </script>
   </body>
