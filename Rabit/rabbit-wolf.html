@@ -220,7 +220,11 @@
           }
         }
         wolfsIndex.forEach(moveWolf)
-        return array
+      }
+
+      function deleteThePlayingField() {
+        const container = document.getElementById("container")
+        container.innerHTML = " "
       }
 
       function sizeThePlayingField(array) {
@@ -270,11 +274,6 @@
             }
           })
         })
-      }
-
-      function deleteThePlayingField() {
-        const container = document.getElementById("container")
-        container.innerHTML = " "
       }
 
       function gameStatus(array, status) {
