@@ -15,335 +15,286 @@
       <option value="10">10 X 10</option>
     </select>
     <div id="container"></div>
+    <!-- <div id="button">
+      <button id="RabbitGoToUp">UP</button><br /><br />
+      <button id="RabbitGoToLeft">LEFT</button>
+      <button id="RabbitGoToRight">RIGHT</button><br /><br />
+      <button id="RabbitGoToDown">DOWN</button>
+    </div> -->
     <script>
-      const FREE_CELL = 0;
-      const RABBIT = "Rabbit";
-      const WOLF = "wOLF";
-      const FENCE = 3;
-      const HOME = "Home";
-      const X = 0;
-      const Y = 1;
+      const FREE_CELL = 0
+      const RABBIT = "Rabbit"
+      const WOLF = "wOLF"
+      const FENCE = 3
+      const HOME = "Home"
+      const X = 0
+      const Y = 1
 
       const IMAGES = {
         [RABBIT]: "img/rabbit.gif",
         [WOLF]: "img/gamewolf.png",
         [FENCE]: "img/ban.png",
         [HOME]: "img/home.png",
-      };
+      }
 
-      const btn = document.getElementById("btn");
-      btn.onclick = start;
-      function start(moveRabbit) {
-        deleteThePlayingField();
-        const value = document.getElementById("select").value;
-        const array = createMatrice(value);
+      const btn = document.getElementById("btn")
+      btn.onclick = start
+      function start() {
+        deleteThePlayingField()
 
-        const wolfCount = Math.ceil((60 * value) / 100);
-        const fenceCount = Math.round((40 * value) / 100);
+        const value = document.getElementById("select").value
+        const array = createMatrice(value)
+        const gameState = {
+          matrix: array,
+          IsGameOver: false,
+          gameResult: null,
+        }
+        const wolfCount = Math.ceil((60 * value) / 100)
+        const fenceCount = Math.round((40 * value) / 100)
 
-        defineAtributes(array, wolfCount, fenceCount);
-        const moveRab = moveRabbit;
-        eventLisener(array);
+        defineAtributes(gameState.matrix, wolfCount, fenceCount)
 
-        createAGameTable(array);
+        eventLisener(gameState.matrix)
+
+        drawAPlayingField(gameState.matrix)
+        if (gameState.gameResult) {
+          deleteThePlayingField()
+          window.removeEventListener("keyup")
+        }
       }
 
       function eventLisener(array) {
         window.addEventListener("keyup", function (event) {
-          const rabbitIndex = findCordinateCharacter(array, RABBIT)[0];
-          const [x, y] = rabbitIndex;
-          moveRabit(array, rabbitIndex, event.key);
-        });
+          const rabbitIndex = findCordinateCharacter(array, RABBIT)[0]
+          const [x, y] = rabbitIndex
+          moveRabit(array, rabbitIndex, event.key)
+        })
       }
       function defineRandomPosition(arr, character) {
-        const x = Math.floor(Math.random() * arr.length);
-        const y = Math.floor(Math.random() * arr.length);
+        const x = Math.floor(Math.random() * arr.length)
+        const y = Math.floor(Math.random() * arr.length)
         if (arr[x][y] === FREE_CELL) {
-          arr[x][y] = character;
+          arr[x][y] = character
         } else {
-          defineRandomPosition(arr, character);
+          defineRandomPosition(arr, character)
         }
       }
 
       function defineAtributes(array, wolfCount, fenceCount) {
-        drawATable(array);
-        defineRabbit(array);
-        wolves(array, wolfCount);
-        fences(array, fenceCount);
-        defineHome(array);
-        console.log(array);
+        defineRabbit(array)
+        wolves(array, wolfCount)
+        fences(array, fenceCount)
+        defineHome(array)
+        console.log(array)
       }
 
       function fences(arr, count) {
         for (i = 1; i < count; i++) {
-          defineFence(arr);
+          defineFence(arr)
         }
       }
 
       function wolves(arr, wolfCount) {
         for (i = 0; i < wolfCount; i++) {
-          defineWolf(arr);
+          defineWolf(arr)
         }
       }
       function IndexWolfes(array) {
         for (i = 0; i < array.length; i++) {
-          console.log(array[i]);
+          console.log(array[i])
         }
       }
-      const defineRabbit = (arr) => defineRandomPosition(arr, RABBIT);
-      const defineFence = (arr) => defineRandomPosition(arr, FENCE);
-      const defineWolf = (arr) => defineRandomPosition(arr, WOLF);
-      const defineHome = (arr) => defineRandomPosition(arr, HOME);
+      const defineRabbit = (arr) => defineRandomPosition(arr, RABBIT)
+      const defineFence = (arr) => defineRandomPosition(arr, FENCE)
+      const defineWolf = (arr) => defineRandomPosition(arr, WOLF)
+      const defineHome = (arr) => defineRandomPosition(arr, HOME)
 
       function createMatrice(value) {
-        let arr = [];
+        let arr = []
         for (let i = 0; i < value; i++) {
-          arr[i] = [];
+          arr[i] = []
           for (let j = 0; j < value; j++) {
-            arr[i][j] = FREE_CELL;
+            arr[i][j] = FREE_CELL
           }
         }
-        return arr;
+        return arr
       }
 
       function findCordinateCharacter(array, character) {
         const findeMtrix = function (accumulator, row, x) {
           row.forEach((cell, y) => {
             if (cell === character) {
-              accumulator.push([x, y]);
+              accumulator.push([x, y])
             }
-          });
-          return accumulator;
-        };
-        return array.reduce(findeMtrix, []);
+          })
+          return accumulator
+        }
+        return array.reduce(findeMtrix, [])
       }
 
-      function RabbitGoToRight(array, rabbitIndex) {
-        const [x, y] = rabbitIndex;
-        const newY = (y + 1) % array.length;
-        array[x][y] = array[x][newY];
-        if (array[x][newY] === FREE_CELL) {
-          array[x][newY] = RABBIT;
-          array[x][y] = FREE_CELL;
-        } else if (array[x][newY] === HOME) {
-          alert("Congratulations! You Won!");
-          deleteThePlayingField();
-          window.removeEventListener("keyup");
-        } else if (array[x][newY] === WOLF) {
-          alert("Game Over!");
-          deleteThePlayingField();
-          window.removeEventListener("keyup");
-        } else if (array[x][newY] === FENCE) {
-          array[x][y] = RABBIT;
+      function rabbitGoTo(array, rabbitIndex, x, y) {
+        const [i, j] = rabbitIndex
+        if (array[x][y] === FREE_CELL) {
+          array[x][y] = RABBIT
+          array[i][j] = FREE_CELL
         }
-        console.log(array);
-      }
+        if (array[x][y] === HOME) {
+          gameStatus(array, false)
+        }
 
-      function RabbitGoToLeft(array, rabbitIndex) {
-        const [x, y] = rabbitIndex;
-        if (y === 0) {
-          console.log(array.length);
-          let newY = array.length - 1;
-          array[x][newY] = RABBIT;
-          array[x][y] = FREE_CELL;
-        } else {
-          let newY = y - 1;
-          array[x][y] = array[x][newY];
-          if (array[x][newY] === FREE_CELL) {
-            array[x][newY] = RABBIT;
-            array[x][y] = FREE_CELL;
-          } else if (array[x][newY] === HOME) {
-            alert("Congratulations! You Won!");
-            deleteThePlayingField();
-            window.removeEventListener("keyup");
-          } else if (array[x][newY] === WOLF) {
-            alert("Game Over!");
-            deleteThePlayingField();
-            window.removeEventListener("keyup");
-          } else if (array[x][newY] === FENCE) {
-            array[x][y] = RABBIT;
-          }
+        if (array[x][y] === WOLF) {
+          gameStatus(array, true)
         }
-        console.log(array);
-      }
-
-      function RabbitGoToUp(array, rabbitIndex) {
-        const [x, y] = rabbitIndex;
-        if (x === 0) {
-          let newX = array.length - 1;
-          array[newX][y] = RABBIT;
-          array[x][y] = FREE_CELL;
-        } else {
-          let newX = (x - 1) % array.length;
-          array[x][y] = array[newX][y];
-          if (array[newX][y] === FREE_CELL) {
-            array[newX][y] = RABBIT;
-            array[x][y] = FREE_CELL;
-          } else if (array[newX][y] === HOME) {
-            alert("Congratulations! You Won!");
-            deleteThePlayingField();
-            window.removeEventListener("keyup");
-          } else if (array[newX][y] === WOLF) {
-            alert("Game Over!");
-
-            deleteThePlayingField();
-            window.removeEventListener("keyup");
-          } else if (array[newX][y] === FENCE) {
-            array[x][y] = RABBIT;
-          }
-        }
-        console.log(array);
-      }
-
-      function RabbitGoToDown(array, rabbitIndex) {
-        const [x, y] = rabbitIndex;
-        const newX = (x + 1) % array.length;
-        array[x][y] = array[newX][y];
-        if (array[newX][y] === FREE_CELL) {
-          array[newX][y] = RABBIT;
-          array[x][y] = FREE_CELL;
-        }
-        if (array[newX][y] === HOME) {
-          alert("Congratulations! You Won!");
-          deleteThePlayingField();
-          window.removeEventListener("keyup");
-        } else if (array[newX][y] === WOLF) {
-          alert("Game Over!");
-          deleteThePlayingField();
-          window.removeEventListener("keyup");
-        } else if (array[newX][y] === FENCE) {
-          array[x][y] = RABBIT;
-        }
-        console.log(array);
+        console.log(array)
       }
       function moveRabit(array, rabbitIndex, eventKey) {
+        let [x, y] = rabbitIndex
+        let newX = x
+        let newY = y
+        const arraySize = array.length - 1
         if (eventKey === "ArrowRight") {
-          RabbitGoToRight(array, rabbitIndex);
-          deleteThePlayingField();
+          newY = y + 1
+          if (y === arraySize) {
+            newY = 0
+          }
         } else if (eventKey === "ArrowLeft") {
-          RabbitGoToLeft(array, rabbitIndex);
-          deleteThePlayingField();
+          newY = y - 1
+          if (y === 0) {
+            newY = arraySize
+          }
         } else if (eventKey === "ArrowUp") {
-          RabbitGoToUp(array, rabbitIndex);
-          deleteThePlayingField();
+          newX = x - 1
+          if (x === 0) {
+            newX = arraySize
+          }
         } else if (eventKey === "ArrowDown") {
-          RabbitGoToDown(array, rabbitIndex);
-          deleteThePlayingField();
+          newX = x + 1
+          if (x === arraySize) {
+            newX = 0
+          }
         }
-        moveWolf(array, rabbitIndex);
-        deleteThePlayingField();
-        createAGameTable(array);
+        rabbitGoTo(array, rabbitIndex, newX, newY)
+        moveWolf(array, rabbitIndex)
+        deleteThePlayingField()
+        drawAPlayingField(array)
       }
 
       function findTheEmptyBoxes(array, index) {
-        const [x, y] = index;
-        const up = [x - 1, y];
-        const down = [x + 1, y];
-        const right = [x, y + 1];
-        const left = [x, y - 1];
-        let steps = [up, down, right, left];
+        const [x, y] = index
+        const up = [x - 1, y]
+        const down = [x + 1, y]
+        const right = [x, y + 1]
+        const left = [x, y - 1]
+        let steps = [up, down, right, left]
 
         steps = steps.filter(
-          (item) =>
-            item[X] >= 0 &&
-            item[X] < array.length &&
-            item[Y] >= 0 &&
-            item[Y] < array.length
-        );
+          (move) =>
+            move[X] >= 0 &&
+            move[X] < array.length &&
+            move[Y] >= 0 &&
+            move[Y] < array.length
+        )
         let findRebbitNearWolf = steps.filter(
           (step) => array[step[X]][step[Y]] === RABBIT
-        );
+        )
 
         if (findRebbitNearWolf.length !== 0) {
-          alert("You Lost");
-          deleteThePlayingField();
-          window.removeEventListener("keyup");
+          gameStatus(array, true)
         } else {
-          return steps.filter((step) => array[step[X]][step[Y]] === FREE_CELL);
+          return steps.filter((step) => array[step[X]][step[Y]] === FREE_CELL)
         }
       }
 
-      function pythagorean(rabbitIndex, wolfIndex) {
-        const [x1, y1] = rabbitIndex;
-        const [x2, y2] = wolfIndex;
-        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+      function minStepcordinate(rabbitIndex, wolfIndex) {
+        const [x1, y1] = rabbitIndex
+        const [x2, y2] = wolfIndex
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
       }
 
       function moveWolf(array, rabbitIndex) {
-        const wolfsIndex = findCordinateCharacter(array, WOLF);
-
+        const wolfsIndex = findCordinateCharacter(array, WOLF)
         const moveWolf = (wolf) => {
-          const steps = findTheEmptyBoxes(array, wolf);
+          const steps = findTheEmptyBoxes(array, wolf)
           if (steps !== undefined) {
             const distances = steps.map((step) =>
-              pythagorean(rabbitIndex, step)
-            );
-            const index = distances.indexOf(Math.min(...distances));
-            const nearPoint = steps[index];
-            array[nearPoint[X]][nearPoint[Y]] = WOLF;
-            array[wolf[X]][wolf[Y]] = FREE_CELL;
+              minStepcordinate(rabbitIndex, step)
+            )
+            const index = distances.indexOf(Math.min(...distances))
+            const nearPoint = steps[index]
+            array[nearPoint[X]][nearPoint[Y]] = WOLF
+            array[wolf[X]][wolf[Y]] = FREE_CELL
           }
-        };
-        wolfsIndex.forEach(moveWolf);
-        return array;
-      }
-
-      function drawATable(array) {
-        sizeThePlayingField(array);
+        }
+        wolfsIndex.forEach(moveWolf)
+        return array
       }
 
       function sizeThePlayingField(array) {
-        const width = array.length * 80 + 100 + "px";
-        const gameAreaDiv = document.getElementById("container");
-        gameAreaDiv.style.width = width;
+        const width = array.length * 80 + 100 + "px"
+        const playingFieldDiv = document.getElementById("container")
+        playingFieldDiv.style.width = width
       }
 
-      function appendInnerDivsElement(index) {
-        const container = document.getElementById("container");
-        const div = document.createElement("div");
-        div.className.box;
-        div.setAttribute("id", index);
-        div.setAttribute("class", "box");
-        container.append(div);
+      function appendElementsInnerDivs(index) {
+        const container = document.getElementById("container")
+        const div = document.createElement("div")
+        div.setAttribute("id", index)
+        div.setAttribute("class", "box")
+        container.append(div)
       }
 
       function addPicturesOnThePlayingField(character, index) {
-        const div = document.getElementById(index);
-        const img = document.createElement("img");
-        img.src = IMAGES[character];
-        div.append(img);
+        const div = document.getElementById(index)
+        const img = document.createElement("img")
+        img.src = IMAGES[character]
+        div.append(img)
       }
 
-      function createAGameTable(array) {
-        array.forEach((row, i) => {
-          row.forEach((col, j) => {
-            const index = i.toString() + j.toString();
-            if (col === FREE_CELL) {
-              appendInnerDivsElement(index);
+      function drawAPlayingField(array) {
+        sizeThePlayingField(array)
+        array.forEach((row, x) => {
+          row.forEach((cell, y) => {
+            const index = [x, y]
+            if (cell === FREE_CELL) {
+              appendElementsInnerDivs(index)
             }
-            if (col === RABBIT) {
-              appendInnerDivsElement(index);
-              addPicturesOnThePlayingField(RABBIT, index);
+            if (cell === RABBIT) {
+              appendElementsInnerDivs(index)
+              addPicturesOnThePlayingField(RABBIT, index)
             }
-            if (col === WOLF) {
-              appendInnerDivsElement(index);
-              addPicturesOnThePlayingField(WOLF, index);
+            if (cell === WOLF) {
+              appendElementsInnerDivs(index)
+              addPicturesOnThePlayingField(WOLF, index)
             }
-            if (col === FENCE) {
-              appendInnerDivsElement(index);
-              addPicturesOnThePlayingField(FENCE, index);
+            if (cell === FENCE) {
+              appendElementsInnerDivs(index)
+              addPicturesOnThePlayingField(FENCE, index)
             }
-            if (col === HOME) {
-              appendInnerDivsElement(index);
-              addPicturesOnThePlayingField(HOME, index);
+            if (cell === HOME) {
+              appendElementsInnerDivs(index)
+              addPicturesOnThePlayingField(HOME, index)
             }
-          });
-        });
+          })
+        })
       }
 
       function deleteThePlayingField() {
-        const container = document.getElementById("container");
-        container.innerHTML = "";
+        const container = document.getElementById("container")
+        container.innerHTML = " "
+      }
+
+      function gameStatus(array, status) {
+        array.IsGameOver = status
+
+        if (array.IsGameOver === true) {
+          array.gameResult = "gamOver"
+          alert("You Lost")
+        } else {
+          array.gameResult = "win"
+          alert("Congratulations! You Won!")
+        }
+        // deleteThePlayingField()
+        // window.removeEventListener("keyup")
       }
     </script>
   </body>
