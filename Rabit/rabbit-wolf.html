@@ -41,7 +41,7 @@
         const gameState = {
           matrix: array,
           IsGameOver: false,
-          gameResult: null,
+          gameResult: "",
         }
         const wolfCount = Math.ceil((60 * value) / 100)
         const fenceCount = Math.round((40 * value) / 100)
@@ -51,10 +51,6 @@
         eventLisener(gameState)
 
         drawAPlayingField(gameState.matrix)
-        if (gameState.gameResult) {
-          deleteThePlayingField()
-          window.document.removeEventListener("keyup")
-        }
       }
 
       function eventLisener(gameState) {
@@ -78,22 +74,26 @@
       }
 
       function defineAtributes(gameState, wolfCount, fenceCount) {
-        defineRabbit(gameState.matrix)
-        wolves(gameState.matrix, wolfCount)
-        fences(gameState.matrix, fenceCount)
-        defineHome(gameState.matrix)
-        console.log(gameState.matrix)
-      }
-
-      function fences(arr, count) {
-        for (i = 1; i < count; i++) {
-          defineFence(arr)
+        if (gameState.gameResult) {
+          start()
+        } else {
+          defineRabbit(gameState.matrix)
+          wolves(gameState.matrix, wolfCount)
+          fences(gameState.matrix, fenceCount)
+          defineHome(gameState.matrix)
+          console.log(gameState.matrix)
         }
       }
 
-      function wolves(arr, wolfCount) {
+      function fences(array, count) {
+        for (i = 1; i < count; i++) {
+          defineFence(array)
+        }
+      }
+
+      function wolves(array, wolfCount) {
         for (i = 0; i < wolfCount; i++) {
-          defineWolf(arr)
+          defineWolf(array)
         }
       }
       function IndexWolfes(array) {
@@ -101,10 +101,10 @@
           console.log(array[i])
         }
       }
-      const defineRabbit = (arr) => defineRandomPosition(arr, RABBIT)
-      const defineFence = (arr) => defineRandomPosition(arr, FENCE)
-      const defineWolf = (arr) => defineRandomPosition(arr, WOLF)
-      const defineHome = (arr) => defineRandomPosition(arr, HOME)
+      const defineRabbit = (array) => defineRandomPosition(array, RABBIT)
+      const defineFence = (array) => defineRandomPosition(array, FENCE)
+      const defineWolf = (array) => defineRandomPosition(array, WOLF)
+      const defineHome = (array) => defineRandomPosition(array, HOME)
 
       function createMatrice(value) {
         let arr = []
@@ -130,27 +130,27 @@
       }
 
       function rabbitGoTo(gameState, rabbitIndex, x, y) {
+        const array = gameState.matrix
         const [i, j] = rabbitIndex
         if (array[x][y] === FREE_CELL) {
           array[x][y] = RABBIT
           array[i][j] = FREE_CELL
+          console.log(array)
         }
         if (array[x][y] === HOME) {
+          array[x][y] = HOME
+          array[i][j] = RABBIT
           gameStatus(gameState, false)
         }
 
         if (array[x][y] === WOLF) {
+          array[x][y] = WOLF
+          array[i][j] = RABBIT
           gameStatus(gameState, true)
-        }
-
-        console.log(array)
-        if (gameState.gameResult) {
-          deleteThePlayingField()
-          window.document.removeEventListener("keyup", eventLisener)
         }
       }
       function moveRabit(gameState, rabbitIndex, eventKey) {
-        array = gameState.matrix
+        const array = gameState.matrix
         let [x, y] = rabbitIndex
         let newX = x
         let newY = y
@@ -184,7 +184,7 @@
       }
 
       function findTheEmptyBoxes(gameState, index) {
-        array = gameState.matrix
+        const array = gameState.matrix
         const [x, y] = index
         const up = [x - 1, y]
         const down = [x + 1, y]
@@ -217,7 +217,7 @@
       }
 
       function moveWolf(gameState, rabbitIndex) {
-        array = gameState.matrix
+        const array = gameState.matrix
         const wolfsIndex = findCordinateCharacter(gameState.matrix, WOLF)
         const moveWolf = (wolf) => {
           const steps = findTheEmptyBoxes(gameState, wolf)
@@ -292,12 +292,15 @@
         gameState.IsGameOver = status
 
         if (gameState.IsGameOver === true) {
-          array.gameResult = "gamOver"
+          gameState.gameResult = "gamOver"
           alert("You Lost")
+        } else {
+          gameState.gameResult = "win"
+          alert("Congratulations! You Won!")
         }
+        deleteThePlayingField()
 
-        gameState.gameResult = "win"
-        alert("Congratulations! You Won!")
+        console.log(gameState)
       }
     </script>
   </body>
