@@ -33,16 +33,20 @@
 
       const btn = document.getElementById("btn")
       btn.onclick = start
+
       function start() {
         deleteThePlayingField()
+        document.getElementById("container").style.display = "flex"
 
         const value = document.getElementById("select").value
-        const array = createMatrice(value)
+        const array = createMatrix(value)
+
         const gameState = {
-          matrix: array,
-          IsGameOver: false,
+          gameMatrix: array,
+          gameContinue: false,
           gameResult: "",
         }
+
         const wolfCount = Math.ceil((60 * value) / 100)
         const fenceCount = Math.round((40 * value) / 100)
 
@@ -50,19 +54,38 @@
 
         eventLisener(gameState)
 
-        drawAPlayingField(gameState.matrix)
+        drawAPlayingField(gameState.gameMatrix)
       }
 
       function eventLisener(gameState) {
-        window.addEventListener("keyup", function (event) {
+        function startMoveRabbit(eventKey) {
+          if (gameState.gameResult) {
+            window.removeEventListener("keyup", startMoveRabbit)
+            return
+          }
+
           const rabbitIndex = findCordinateCharacter(
-            gameState.matrix,
+            gameState.gameMatrix,
             RABBIT
           )[0]
           const [x, y] = rabbitIndex
-          moveRabit(gameState, rabbitIndex, event.key)
-        })
+
+          const [newX, newY] = getDirectionCoord(
+            gameState,
+            rabbitIndex,
+            event.key
+          )
+
+          rabbitGoTo(gameState, rabbitIndex, newX, newY)
+
+          moveWolves(gameState, rabbitIndex)
+          deleteThePlayingField()
+          drawAPlayingField(gameState.gameMatrix)
+        }
+
+        window.addEventListener("keyup", startMoveRabbit)
       }
+
       function defineRandomPosition(arr, character) {
         const x = Math.floor(Math.random() * arr.length)
         const y = Math.floor(Math.random() * arr.length)
@@ -75,23 +98,23 @@
 
       function defineAtributes(gameState, wolfCount, fenceCount) {
         if (gameState.gameResult) {
-          start()
+          return
         } else {
-          defineRabbit(gameState.matrix)
-          wolves(gameState.matrix, wolfCount)
-          fences(gameState.matrix, fenceCount)
-          defineHome(gameState.matrix)
-          console.log(gameState.matrix)
+          defineRabbit(gameState.gameMatrix)
+          defineWolves(gameState.gameMatrix, wolfCount)
+          defineFences(gameState.gameMatrix, fenceCount)
+          defineHome(gameState.gameMatrix)
+          console.log(gameState.gameMatrix)
         }
       }
 
-      function fences(array, count) {
+      function defineFences(array, count) {
         for (i = 1; i < count; i++) {
           defineFence(array)
         }
       }
 
-      function wolves(array, wolfCount) {
+      function defineWolves(array, wolfCount) {
         for (i = 0; i < wolfCount; i++) {
           defineWolf(array)
         }
@@ -106,7 +129,7 @@
       const defineWolf = (array) => defineRandomPosition(array, WOLF)
       const defineHome = (array) => defineRandomPosition(array, HOME)
 
-      function createMatrice(value) {
+      function createMatrix(value) {
         let arr = []
         for (let i = 0; i < value; i++) {
           arr[i] = []
@@ -130,7 +153,7 @@
       }
 
       function rabbitGoTo(gameState, rabbitIndex, x, y) {
-        const array = gameState.matrix
+        const array = gameState.gameMatrix
         const [i, j] = rabbitIndex
         if (array[x][y] === FREE_CELL) {
           array[x][y] = RABBIT
@@ -141,16 +164,19 @@
           array[x][y] = HOME
           array[i][j] = RABBIT
           gameStatus(gameState, false)
+          return
         }
 
         if (array[x][y] === WOLF) {
           array[x][y] = WOLF
           array[i][j] = RABBIT
           gameStatus(gameState, true)
+          return
         }
       }
-      function moveRabit(gameState, rabbitIndex, eventKey) {
-        const array = gameState.matrix
+
+      function getDirectionCoord(gameState, rabbitIndex, eventKey) {
+        const array = gameState.gameMatrix
         let [x, y] = rabbitIndex
         let newX = x
         let newY = y
@@ -177,14 +203,11 @@
           }
         }
 
-        rabbitGoTo(gameState, rabbitIndex, newX, newY)
-        moveWolf(gameState, rabbitIndex)
-        deleteThePlayingField()
-        drawAPlayingField(gameState.matrix)
+        return [newX, newY]
       }
 
       function findTheEmptyBoxes(gameState, index) {
-        const array = gameState.matrix
+        const array = gameState.gameMatrix
         const [x, y] = index
         const up = [x - 1, y]
         const down = [x + 1, y]
@@ -216,10 +239,14 @@
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
       }
 
-      function moveWolf(gameState, rabbitIndex) {
-        const array = gameState.matrix
-        const wolfsIndex = findCordinateCharacter(gameState.matrix, WOLF)
+      function moveWolves(gameState, rabbitIndex) {
+        const array = gameState.gameMatrix
+        const wolfsIndex = findCordinateCharacter(gameState.gameMatrix, WOLF)
+
         const moveWolf = (wolf) => {
+          if (gameState.gameResult) {
+            return
+          }
           const steps = findTheEmptyBoxes(gameState, wolf)
           if (steps !== undefined) {
             const distances = steps.map((step) =>
@@ -231,6 +258,7 @@
             array[wolf[X]][wolf[Y]] = FREE_CELL
           }
         }
+
         wolfsIndex.forEach(moveWolf)
       }
 
@@ -247,6 +275,7 @@
 
       function appendElementsInnerDivs(index) {
         const container = document.getElementById("container")
+
         const div = document.createElement("div")
         div.setAttribute("id", index)
         div.setAttribute("class", "box")
@@ -289,9 +318,9 @@
       }
 
       function gameStatus(gameState, status) {
-        gameState.IsGameOver = status
+        gameState.gameContinue = status
 
-        if (gameState.IsGameOver === true) {
+        if (gameState.gameContinue === true) {
           gameState.gameResult = "gamOver"
           alert("You Lost")
         } else {
@@ -299,8 +328,12 @@
           alert("Congratulations! You Won!")
         }
         deleteThePlayingField()
-
+        document.getElementById("container").style.display = "none"
         console.log(gameState)
+      }
+
+      function changeGameStatus(gameState, status) {
+        ;(gameState.gameContinue = false), (gameState.gameResult = status)
       }
     </script>
   </body>
