@@ -32,9 +32,9 @@
       }
 
       const btn = document.getElementById("btn")
-      btn.onclick = start
+      btn.onclick = startGame
 
-      function start() {
+      function startGame() {
         deleteThePlayingField()
         document.getElementById("container").style.display = "flex"
 
@@ -43,7 +43,7 @@
 
         const gameState = {
           gameMatrix: array,
-          gameContinue: false,
+          gameContinue: true,
           gameResult: "",
         }
 
@@ -59,11 +59,10 @@
 
       function eventLisener(gameState) {
         function startMoveRabbit(eventKey) {
-          if (gameState.gameResult) {
+          if (gameState.gameContinue === false) {
             window.removeEventListener("keyup", startMoveRabbit)
             return
           }
-
           const rabbitIndex = findCordinateCharacter(
             gameState.gameMatrix,
             RABBIT
@@ -75,14 +74,25 @@
             rabbitIndex,
             event.key
           )
-
           rabbitGoTo(gameState, rabbitIndex, newX, newY)
-
-          moveWolves(gameState, rabbitIndex)
-          deleteThePlayingField()
-          drawAPlayingField(gameState.gameMatrix)
+          console.log(gameState.gameContinue)
+          console.log(gameState.gameResult)
+          if (gameState.gameContinue === false) {
+            displayOfTheFinal(gameState)
+            return
+          } else {
+            moveWolves(gameState, rabbitIndex)
+            console.log(gameState.gameContinue)
+            console.log(gameState.gameResult)
+            if (gameState.gameContinue === false) {
+              displayOfTheFinal(gameState)
+              return
+            } else {
+              deleteThePlayingField()
+              drawAPlayingField(gameState.gameMatrix)
+            }
+          }
         }
-
         window.addEventListener("keyup", startMoveRabbit)
       }
 
@@ -163,14 +173,14 @@
         if (array[x][y] === HOME) {
           array[x][y] = HOME
           array[i][j] = RABBIT
-          gameStatus(gameState, false)
+          changeGameStatus(gameState, "win")
           return
         }
 
         if (array[x][y] === WOLF) {
           array[x][y] = WOLF
           array[i][j] = RABBIT
-          gameStatus(gameState, true)
+          changeGameStatus(gameState, "gameOver")
           return
         }
       }
@@ -227,7 +237,8 @@
         )
 
         if (findRebbitNearWolf.length !== 0) {
-          gameStatus(gameState, true)
+          changeGameStatus(gameState, "gameOver")
+          return
         } else {
           return steps.filter((step) => array[step[X]][step[Y]] === FREE_CELL)
         }
@@ -244,7 +255,8 @@
         const wolfsIndex = findCordinateCharacter(gameState.gameMatrix, WOLF)
 
         const moveWolf = (wolf) => {
-          if (gameState.gameResult) {
+          if (gameState.gameContinue === false) {
+            changeGameStatus(gameState, "gameOver")
             return
           }
           const steps = findTheEmptyBoxes(gameState, wolf)
@@ -317,23 +329,19 @@
         })
       }
 
-      function gameStatus(gameState, status) {
-        gameState.gameContinue = status
-
-        if (gameState.gameContinue === true) {
-          gameState.gameResult = "gamOver"
-          alert("You Lost")
-        } else {
-          gameState.gameResult = "win"
+      function displayOfTheFinal(gameState) {
+        if (gameState.gameResult === "win") {
           alert("Congratulations! You Won!")
+        } else {
+          alert("You Lost")
         }
         deleteThePlayingField()
         document.getElementById("container").style.display = "none"
-        console.log(gameState)
       }
 
       function changeGameStatus(gameState, status) {
-        ;(gameState.gameContinue = false), (gameState.gameResult = status)
+        gameState.gameContinue = false
+        gameState.gameResult = status
       }
     </script>
   </body>
