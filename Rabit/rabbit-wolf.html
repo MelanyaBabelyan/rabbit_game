@@ -58,7 +58,7 @@
         defineAtributes(gameState, wolfCount, fenceCount)
 
         drawBtn()
-        newGame()
+
         const btnUp = document.getElementById("up-" + i)
         const btnDown = document.getElementById("down-" + i)
         const btnLeft = document.getElementById("left-" + i)
@@ -390,18 +390,6 @@
         btnLeft.id = "left-" + i
         btnContainer.append(btnUp, btnRight, btnDown, btnLeft)
         container.append(btnContainer)
-      }
-
-      function newGame() {
-        const container = document.getElementById("container")
-        // const NEW_BOARD_BUTTON = document.createElement("newBoard")
-        const newGame = document.createElement("button")
-        newGame.id = "newBoard"
-        newGame.innerHTML = "New Board"
-        // NEW_BOARD_BUTTON.append(newGame)
-        container.append(newGame)
-        // newGame.onclick=startNewGame
-
       }
     </script>
   </body>
