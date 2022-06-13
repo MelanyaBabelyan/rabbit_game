@@ -9,13 +9,18 @@
   </head>
   <body>
     <button id="btn">Start</button>
+
     <select id="select">
       <option value="5">5 X 5</option>
       <option value="7">7 X 7</option>
       <option value="10">10 X 10</option>
     </select>
-    <div id="container"></div>
-    <div id="btnEvent"></div>
+
+    <div id="container">
+      <div id="newGameArea"></div>
+      <div id="btnEvent"></div>
+    </div>
+
     <script>
       const FREE_CELL = 0
       const RABBIT = "Rabbit"
@@ -24,7 +29,7 @@
       const HOME = "Home"
       const X = 0
       const Y = 1
-
+      let number = 0
       const IMAGES = {
         [RABBIT]: "img/rabbit.gif",
         [WOLF]: "img/gamewolf.png",
@@ -37,7 +42,8 @@
 
       function startGame() {
         deleteThePlayingField()
-
+        const container = document.getElementById("btnEvent")
+        container.innerHTML = ""
         const value = document.getElementById("select").value
         const array = createMatrix(value)
 
@@ -48,13 +54,73 @@
         }
 
         const wolfCount = Math.ceil((60 * value) / 100)
-
         const fenceCount = Math.round((40 * value) / 100)
-
         defineAtributes(gameState, wolfCount, fenceCount)
-        drawAPlayingField(gameState.gameMatrix)
+
         drawBtn()
-        btnEventLissener(gameState)
+        newGame()
+        const btnUp = document.getElementById("up-" + i)
+        const btnDown = document.getElementById("down-" + i)
+        const btnLeft = document.getElementById("left-" + i)
+        const btnRight = document.getElementById("right-" + i)
+        // btnUp.removeEventListener("click", ArrowUp)
+        // btnRight.removeEventListener("click", ArrowRight)
+        // btnDown.removeEventListener("click", ArrowDown)
+        // btnLeft.removeEventListener("click", ArrowLeft)
+        function ArrowUp() {
+          eventKeysFunctions(gameState, "ArrowUp")
+        }
+        function ArrowRight() {
+          eventKeysFunctions(gameState, "ArrowRight")
+        }
+        function ArrowDown() {
+          eventKeysFunctions(gameState, "ArrowDown")
+        }
+
+        function ArrowLeft() {
+          eventKeysFunctions(gameState, "ArrowLeft")
+        }
+
+        btnUp.addEventListener("click", ArrowUp)
+        btnRight.addEventListener("click", ArrowRight)
+        btnDown.addEventListener("click", ArrowDown)
+        btnLeft.addEventListener("click", ArrowLeft)
+        drawAPlayingField(gameState.gameMatrix)
+
+        function eventKeysFunctions(gameState, eventKey) {
+          console.log(eventKey)
+          const rabbitIndex = findCordinateCharacter(
+            gameState.gameMatrix,
+            RABBIT
+          )[0]
+          const [x, y] = rabbitIndex
+
+          const [newX, newY] = getDirectionCoord(
+            gameState,
+            rabbitIndex,
+            eventKey
+          )
+          rabbitGoTo(gameState, rabbitIndex, newX, newY)
+          if (gameState.gameContinue === false) {
+            // btnUp.removeEventListener("click", ArrowUp)
+            // btnRight.removeEventListener("click", ArrowRight)
+            // btnDown.removeEventListener("click", ArrowDown)
+            // btnLeft.removeEventListener("click", ArrowLeft)
+            displayOfTheFinal(gameState)
+            const container = document.getElementById("btnEvent")
+            container.innerHTML = ""
+            return
+          }
+          moveWolves(gameState, rabbitIndex)
+          if (gameState.gameContinue === false) {
+            displayOfTheFinal(gameState)
+            const container = document.getElementById("btnEvent")
+            container.innerHTML = ""
+            return
+          }
+          deleteThePlayingField()
+          drawAPlayingField(gameState.gameMatrix)
+        }
       }
 
       function defineRandomPosition(arr, character) {
@@ -236,7 +302,7 @@
       }
 
       function deleteThePlayingField() {
-        const container = document.getElementById("container")
+        const container = document.getElementById("newGameArea")
         container.innerHTML = " "
         // const btn = document.getElementById("btnEvent")
         // btn.innerHTML = " "
@@ -244,12 +310,12 @@
 
       function sizeThePlayingField(array) {
         const width = array.length * 80 + 100 + "px"
-        const playingFieldDiv = document.getElementById("container")
+        const playingFieldDiv = document.getElementById("newGameArea")
         playingFieldDiv.style.width = width
       }
 
       function appendElementsInnerDivs(index) {
-        const container = document.getElementById("container")
+        const container = document.getElementById("newGameArea")
         const div = document.createElement("div")
         div.setAttribute("id", index)
         div.setAttribute("class", "box")
@@ -307,60 +373,37 @@
       }
 
       function drawBtn(gameState) {
-        const container = document.getElementById("btnEvent")
+        ++number
+        const container = document.getElementById("container")
+        const btnContainer = document.getElementById("btnEvent")
         const btnUp = document.createElement("button")
         const btnRight = document.createElement("button")
         const btnDown = document.createElement("button")
         const btnLeft = document.createElement("button")
-        btnUp.setAttribute("id", "up")
-        btnRight.setAttribute("id", "right")
-        btnDown.setAttribute("id", "down")
-        btnLeft.setAttribute("id", "left")
-        container.append(btnUp, btnRight, btnDown, btnLeft)
+        btnUp.setAttribute("class", "up")
+        btnRight.setAttribute("class", "right")
+        btnDown.setAttribute("class", "down")
+        btnLeft.setAttribute("class", "left")
+        btnUp.id = "up-" + i
+        btnRight.id = "right-" + i
+        btnDown.id = "down-" + i
+        btnLeft.id = "left-" + i
+        btnContainer.append(btnUp, btnRight, btnDown, btnLeft)
+        container.append(btnContainer)
       }
 
-      function btnEventLissener(gameState) {
-        document.getElementById("up").addEventListener("click", function () {
-          eventKeysFunctions(gameState, "ArrowUp")
-        })
+      function newGame() {
+        const container = document.getElementById("container")
+        // const NEW_BOARD_BUTTON = document.createElement("newBoard")
+        const newGame = document.createElement("button")
+        newGame.id = "newBoard"
+        newGame.innerHTML = "New Board"
+        // NEW_BOARD_BUTTON.append(newGame)
+        container.append(newGame)
+        // newGame.onclick=startNewGame
+        // function startNewGame(){
 
-        document.getElementById("down").addEventListener("click", function () {
-          eventKeysFunctions(gameState, "ArrowDown")
-        })
-
-        document.getElementById("left").addEventListener("click", function () {
-          eventKeysFunctions(gameState, "ArrowLeft")
-        })
-        document.getElementById("right").addEventListener("click", function () {
-          eventKeysFunctions(gameState, "ArrowRight")
-        })
-      }
-
-      function eventKeysFunctions(gameState, eventKey) {
-        console.log(eventKey)
-        const rabbitIndex = findCordinateCharacter(
-          gameState.gameMatrix,
-          RABBIT
-        )[0]
-        const [x, y] = rabbitIndex
-
-        const [newX, newY] = getDirectionCoord(gameState, rabbitIndex, eventKey)
-        rabbitGoTo(gameState, rabbitIndex, newX, newY)
-        if (gameState.gameContinue === false) {
-          displayOfTheFinal(gameState)
-          const container = document.getElementById("btnEvent")
-          container.innerHTML = ""
-          return
-        }
-        moveWolves(gameState, rabbitIndex)
-        if (gameState.gameContinue === false) {
-          displayOfTheFinal(gameState)
-          const container = document.getElementById("btnEvent")
-          container.innerHTML = ""
-          return
-        }
-        deleteThePlayingField()
-        drawAPlayingField(gameState.gameMatrix)
+        // }
       }
     </script>
   </body>
