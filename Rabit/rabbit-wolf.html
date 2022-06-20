@@ -418,6 +418,7 @@
         rabbitGoTo(gameState, rabbitIndex, newX, newY)
         if (gameState.gameOver) {
           displayOfTheFinal(gameState)
+          clearIntervalFunction(gameState.gamNumber)
           return
         }
         // moveWolves(gameState, rabbitIndex)
