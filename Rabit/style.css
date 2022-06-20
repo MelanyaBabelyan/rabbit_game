@@ -8,9 +8,10 @@ body {
   margin: 50px auto;
   /* background-color: #dfffef; */
   background-image: url(img/78812fd262025d24e53452a1307bbb6d.png);
-
+  text-align: center;
   display: block;
 }
+
 button {
   width: 150px;
   padding: 10px;
@@ -19,6 +20,7 @@ button {
   border-radius: 25px;
   margin: 0 20px;
   cursor: pointer;
+  margin: 45px;
 }
 .select {
   background: transparent;
@@ -50,8 +52,8 @@ button {
   background-color: rgba(0, 0, 0, 0.55);
   border-radius: 20px;
   justify-content: center;
+  text-align: center;
 }
-
 
 .right {
   width: 120px;
@@ -81,11 +83,17 @@ button {
   margin: 20px auto;
   text-align: center;
 }
-#newBoard {
+/* #newBoard {
   display: block;
-}
+} */
 #container {
   width: 100%;
   /* margin: 20px auto; */
   text-align: center;
+}
+.NewBoard {
+  width: 150px;
+  padding: 10px;
+  background: #f5ffff;
+  color: rgb(0, 0, 0);
 }
