@@ -36,20 +36,6 @@
       const startButton = document.getElementById("newGame")
       startButton.onclick = newGame
 
-      function clearIntervalFunction(gamNumber) {
-        console.log(gamNumber)
-        if (GAME_OBJECT[gamNumber]) {
-          clearInterval(GAME_OBJECT[gamNumber].wolfStepInterval)
-        }
-      }
-
-      function clearGameArea() {
-        const theExistingPlayingField = document.getElementById(
-          "newGameArea-" + boardNumber
-        )
-        theExistingPlayingField.innerHTML = " "
-      }
-
       function startGame(boardNumber) {
         if (GAME_OBJECT[boardNumber]) {
           clearGameArea()
@@ -71,11 +57,11 @@
             deleteThePlayingField(gameState)
             createAPlayingField(gameState)
             if (gameState.gameOver) {
-              clearGameArea()
+              displayOfTheFinal(gameState)
               clearIntervalFunction(boardNumber)
               return
             }
-          }, 1000),
+          }, 1500),
         }
         GAME_OBJECT[boardNumber] = gameState
         console.log(GAME_OBJECT)
@@ -83,6 +69,20 @@
         defineAtributes(gameState, value)
         sizeThePlayingField(gameState)
         createAPlayingField(gameState)
+      }
+
+      function clearIntervalFunction(gamNumber) {
+        console.log(gamNumber)
+        if (GAME_OBJECT[gamNumber]) {
+          clearInterval(GAME_OBJECT[gamNumber].wolfStepInterval)
+        }
+      }
+
+      function clearGameArea() {
+        const theExistingPlayingField = document.getElementById(
+          "newGameArea-" + boardNumber
+        )
+        theExistingPlayingField.innerHTML = " "
       }
 
       function appendBoard(boardNumber) {
@@ -148,7 +148,7 @@
       function defineAtributes(gameState, value) {
         const wolfCount = Math.ceil((60 * value) / 100)
         const fenceCount = Math.round((40 * value) / 100)
-        if (gameState.gameOver) {
+        if (gameState.gameOver === true) {
           return
         }
         defineRabbit(gameState)
@@ -208,15 +208,11 @@
           console.log(array)
         }
         if (array[x][y] === HOME) {
-          array[x][y] = HOME
-          array[i][j] = RABBIT
           changeGameStatus(gameState, "win")
           return
         }
 
         if (array[x][y] === WOLF) {
-          array[x][y] = WOLF
-          array[i][j] = RABBIT
           changeGameStatus(gameState, "gameOver")
           return
         }
@@ -424,11 +420,11 @@
           displayOfTheFinal(gameState)
           return
         }
-        moveWolves(gameState, rabbitIndex)
-        if (gameState.gameOver) {
-          displayOfTheFinal(gameState)
-          return
-        }
+        // moveWolves(gameState, rabbitIndex)
+        // if (gameState.gameOver) {
+        //   displayOfTheFinal(gameState)
+        //   return
+        // }
         createAPlayingField(gameState)
       }
 
