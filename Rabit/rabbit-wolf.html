@@ -48,6 +48,7 @@
           gameResult: "",
           gamNumber: boardNumber,
         }
+
         GAME_OBJECT[boardNumber] = gameState
         console.log(GAME_OBJECT)
         const wolfCount = Math.ceil((60 * value) / 100)
@@ -71,27 +72,34 @@
 
       function newGame() {
         appendBoard()
-
         creatButtonStart()
+        gameStartEventListeners(boardNumber)
       }
 
       function creatButtonStart() {
-        const newDiv = getMoveElement("newBoard-", boardNumber)
+        const newDiv = document.getElementById("newBoard-" + boardNumber)
         const buttonStart = creatButton("start", boardNumber)
+        const newBoardButton = creatButton("NewBoard", boardNumber)
         const selectList = document.createElement("select")
         selectList.id = "select-" + boardNumber
         selectList.classList = "select"
-
-        for (var i = 0; i < ValueSizeArray.length; i++) {
+        for (let i = 0; i < ValueSizeArray.length; i++) {
           let option = document.createElement("option")
           option.value = ValueSizeArray[i]
           option.text = ValueSizeArray[i] + "X" + ValueSizeArray[i]
           selectList.appendChild(option)
         }
-        const newBoardButton = creatButton("NewBoard", boardNumber)
+
         newDiv.append(buttonStart, selectList, newBoardButton)
-        buttonStart.addEventListener("click", () => startGame(boardNumber))
         newBoardButton.addEventListener("click", newGame)
+      }
+
+      function gameStartEventListeners(boardNumber) {
+        const startButton = document.getElementsByClassName(`start`)
+        for (let btn of startButton) {
+          console.log(btn)
+          btn.addEventListener("click", () => startGame(boardNumber))
+        }
       }
 
       function creatDiv(name, boardNumber) {
@@ -182,15 +190,15 @@
           console.log(array)
         }
         if (array[x][y] === HOME) {
-          array[x][y] = HOME
-          array[i][j] = RABBIT
+          // array[x][y] = HOME
+          // array[i][j] = RABBIT
           changeGameStatus(gameState, "win")
           return
         }
 
         if (array[x][y] === WOLF) {
-          array[x][y] = WOLF
-          array[i][j] = RABBIT
+          // array[x][y] = WOLF
+          // array[i][j] = RABBIT
           changeGameStatus(gameState, "gameOver")
           return
         }
@@ -408,7 +416,6 @@
           displayOfTheFinal(gameState)
           return
         }
-
         drawAPlayingField(gameState)
         drawBtn(gameState)
         eventKeys(gameState)
