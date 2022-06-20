@@ -34,10 +34,15 @@
       }
 
       const startButton = document.getElementById("newGame")
-
       startButton.onclick = newGame
 
       function startGame(boardNumber) {
+        if (GAME_OBJECT[boardNumber]) {
+          const theExistingPlayingField = document.getElementById(
+            "newGameArea-" + boardNumber
+          )
+          theExistingPlayingField.innerHTML = " "
+        }
         const value = document.getElementById("select-" + boardNumber).value
         const array = createMatrix(value)
 
@@ -50,10 +55,11 @@
 
         GAME_OBJECT[boardNumber] = gameState
         console.log(GAME_OBJECT)
+
         const wolfCount = Math.ceil((60 * value) / 100)
         const fenceCount = Math.round((40 * value) / 100)
-        defineAtributes(gameState, wolfCount, fenceCount)
 
+        defineAtributes(gameState, wolfCount, fenceCount)
         sizeThePlayingField(gameState)
         drawAPlayingField(gameState)
         drawBtn(gameState)
@@ -61,15 +67,14 @@
       }
 
       function appendBoard() {
-        boardNumber++
         const container = document.getElementById("container")
-        // startButton.style.display = "none"
         const newGameArea = creatDiv("newGameArea", boardNumber)
         const newDiv = creatDiv("newBoard", boardNumber)
         container.append(newDiv, newGameArea)
       }
 
       function newGame() {
+        boardNumber++
         appendBoard()
         creatButtonStart()
         gameStartEventListeners(boardNumber)
@@ -78,7 +83,6 @@
       function creatButtonStart() {
         const newDiv = document.getElementById("newBoard-" + boardNumber)
         const buttonStart = creatButton("start", boardNumber)
-        // const newBoardButton = creatButton("NewBoard", boardNumber)
         const selectList = document.createElement("select")
         selectList.id = "select-" + boardNumber
         selectList.classList = "select"
@@ -88,17 +92,12 @@
           option.text = ValueSizeArray[i] + "X" + ValueSizeArray[i]
           selectList.appendChild(option)
         }
-
         newDiv.append(buttonStart, selectList)
-        // newBoardButton.addEventListener("click", newGame)
       }
 
       function gameStartEventListeners(boardNumber) {
-        const startButton = document.getElementsByClassName(`start`)
-        for (let btn of startButton) {
-          console.log(btn)
-          btn.addEventListener("click", () => startGame(boardNumber))
-        }
+        const startButton = document.getElementById("start-" + boardNumber)
+        startButton.addEventListener("click", () => startGame(boardNumber))
       }
 
       function creatDiv(name, boardNumber) {
@@ -128,14 +127,13 @@
       }
 
       function defineAtributes(gameState, wolfCount, fenceCount) {
-        if (gameState.gameContinue === false) {
+        if (gameState.gameOver === true) {
           return
         }
         defineRabbit(gameState)
         defineWolves(gameState, wolfCount)
         defineFences(gameState, fenceCount)
         defineHome(gameState)
-
         console.log(gameState.gameMatrix, boardNumber)
       }
 
@@ -189,15 +187,11 @@
           console.log(array)
         }
         if (array[x][y] === HOME) {
-          // array[x][y] = HOME
-          // array[i][j] = RABBIT
           changeGameStatus(gameState, "win")
           return
         }
 
         if (array[x][y] === WOLF) {
-          // array[x][y] = WOLF
-          // array[i][j] = RABBIT
           changeGameStatus(gameState, "gameOver")
           return
         }
@@ -230,7 +224,6 @@
             newX = 0
           }
         }
-
         return [newX, newY]
       }
 
@@ -382,16 +375,12 @@
         const container = document.getElementById(
           "newGameArea-" + gameState.gamNumber
         )
-
         const btnContainer = creatDiv("btnEvent", gameState.gamNumber)
-
         const btnUp = creatButton("up", gameState.gamNumber)
         const btnRight = creatButton("right", gameState.gamNumber)
         const btnDown = creatButton("down", gameState.gamNumber)
         const btnLeft = creatButton("left", gameState.gamNumber)
-
         btnContainer.append(btnUp, btnLeft, btnRight, btnDown)
-
         container.append(btnContainer)
       }
 
