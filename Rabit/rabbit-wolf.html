@@ -71,7 +71,7 @@
             deleteThePlayingField(gameState)
             createAPlayingField(gameState)
             if (gameState.gameOver) {
-              displayOfTheFinal(gameState)
+              clearGameArea()
               clearIntervalFunction(boardNumber)
               return
             }
@@ -148,7 +148,7 @@
       function defineAtributes(gameState, value) {
         const wolfCount = Math.ceil((60 * value) / 100)
         const fenceCount = Math.round((40 * value) / 100)
-        if (gameState.gameOver === true) {
+        if (gameState.gameOver) {
           return
         }
         defineRabbit(gameState)
@@ -208,11 +208,15 @@
           console.log(array)
         }
         if (array[x][y] === HOME) {
+          array[x][y] = HOME
+          array[i][j] = RABBIT
           changeGameStatus(gameState, "win")
           return
         }
 
         if (array[x][y] === WOLF) {
+          array[x][y] = WOLF
+          array[i][j] = RABBIT
           changeGameStatus(gameState, "gameOver")
           return
         }
@@ -420,11 +424,11 @@
           displayOfTheFinal(gameState)
           return
         }
-        // moveWolves(gameState, rabbitIndex)
-        // if (gameState.gameOver) {
-        //   displayOfTheFinal(gameState)
-        //   return
-        // }
+        moveWolves(gameState, rabbitIndex)
+        if (gameState.gameOver) {
+          displayOfTheFinal(gameState)
+          return
+        }
         createAPlayingField(gameState)
       }
 
