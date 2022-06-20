@@ -10,7 +10,6 @@
   <body>
     <div id="container"></div>
     <button id="newGame">New Board</button>
-
     <script>
       const FREE_CELL = 0
       const RABBIT = "Rabbit"
@@ -64,7 +63,7 @@
       function appendBoard() {
         boardNumber++
         const container = document.getElementById("container")
-        startButton.style.display = "none"
+        // startButton.style.display = "none"
         const newGameArea = creatDiv("newGameArea", boardNumber)
         const newDiv = creatDiv("newBoard", boardNumber)
         container.append(newDiv, newGameArea)
@@ -79,7 +78,7 @@
       function creatButtonStart() {
         const newDiv = document.getElementById("newBoard-" + boardNumber)
         const buttonStart = creatButton("start", boardNumber)
-        const newBoardButton = creatButton("NewBoard", boardNumber)
+        // const newBoardButton = creatButton("NewBoard", boardNumber)
         const selectList = document.createElement("select")
         selectList.id = "select-" + boardNumber
         selectList.classList = "select"
@@ -90,8 +89,8 @@
           selectList.appendChild(option)
         }
 
-        newDiv.append(buttonStart, selectList, newBoardButton)
-        newBoardButton.addEventListener("click", newGame)
+        newDiv.append(buttonStart, selectList)
+        // newBoardButton.addEventListener("click", newGame)
       }
 
       function gameStartEventListeners(boardNumber) {
