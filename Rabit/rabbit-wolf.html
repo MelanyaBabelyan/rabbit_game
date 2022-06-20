@@ -49,7 +49,7 @@
           gameOver: false,
           gameResult: "",
           gamNumber: boardNumber,
-          wolfStepInterval: setInterval(() => {
+          wolfsStepsInterval: setInterval(() => {
             moveWolves(
               gameState,
               findCordinateCharacter(gameState.gameMatrix, RABBIT)[0]
@@ -74,7 +74,7 @@
       function clearIntervalFunction(gamNumber) {
         console.log(gamNumber)
         if (GAME_OBJECT[gamNumber]) {
-          clearInterval(GAME_OBJECT[gamNumber].wolfStepInterval)
+          clearInterval(GAME_OBJECT[gamNumber].wolfsStepsInterval)
         }
       }
 
